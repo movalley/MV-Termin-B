@@ -16,6 +16,10 @@ mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/te
   useNewUrlParser: true
 })
 
+setTimeout(() => {
+    console.log(mongoose.connection.readyState)
+}, 5000);
+
 var app = express();
 
 // view engine setup

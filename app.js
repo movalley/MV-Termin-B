@@ -6,6 +6,14 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
+
+var chalk = require('chalk');
+
+var connected = chalk.bold.cyan;
+var error = chalk.bold.yellow;
+var disconnected = chalk.bold.red;
+var termination = chalk.bold.magenta;
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var profileRoute = require('./routes/profile');
@@ -17,6 +25,18 @@ mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/te
 }, (err) => {
   console.log(err)
 })
+
+mongoose.connection.on('connected', function(){
+  console.log(connected("Mongoose default connection is open to terminDB"));
+});
+
+mongoose.connection.on('error', function(err){
+  console.log(error("Mongoose default connection has occured "+err+" error"));
+});
+
+mongoose.connection.on('disconnected', function(){
+  console.log(disconnected("Mongoose default connection is disconnected"));
+});
 
 setTimeout(() => {
     console.log(mongoose.connection.readyState)

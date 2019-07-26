@@ -14,6 +14,8 @@ let mongoPass = process.env.MongoPass
 
 mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`, {
   useNewUrlParser: true
+}, (err) => {
+  console.log(err)
 })
 
 setTimeout(() => {

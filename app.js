@@ -12,18 +12,13 @@ var chalk = require('chalk');
 var connected = chalk.bold.cyan;
 var error = chalk.bold.yellow;
 var disconnected = chalk.bold.red;
-var termination = chalk.bold.magenta;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var profileRoute = require('./routes/profile');
 
-let mongoPass = process.env.MongoPass
-
-mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://Mario:${process.env.MongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`, {
   useNewUrlParser: true
-}, (err) => {
-  console.log(err)
 })
 
 mongoose.connection.on('connected', function(){
@@ -37,10 +32,6 @@ mongoose.connection.on('error', function(err){
 mongoose.connection.on('disconnected', function(){
   console.log(disconnected("Mongoose default connection is disconnected"));
 });
-
-setTimeout(() => {
-    console.log(mongoose.connection.readyState)
-}, 5000);
 
 var app = express();
 

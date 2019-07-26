@@ -1,68 +1,60 @@
 let express = require('express');
 let router = express.Router();
+const bcrypt = require("bcryptjs");
+
 
 let jwt = require('jsonwebtoken');
 
 let User = require('../models/user');
 
 // Register user
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
+  try {
+    let newUser = new User({
+      username: req.body.username,
+      password: req.body.password,
+    })
+    
+    let results = await newUser.save();
+    res.status(200).json({ results });
 
-  let newUser = new User({
-    username: req.body.username,
-    password: req.body.password,
-  })
-
-  newUser.save()
-  .then(response => {
-    res.status(200).json({ response });
-  })
-  .catch(e => {
-    res.status(500).json({ e });
-  })
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 
 });
 
 // Login user
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
+  try {
+    let user = await  User.findOne({ username: req.body.username }).exec()
 
-  User.findOne({
-    username: req.body.username
-  }).exec()
-  .then(response => {
+    if(!user) {
+      return res.status(404).json({ message: 'Authentication failed. User not found.'});
+    }
 
-    console.log(response)
+    isMatch = await user.comparePassword(req.body.password);
 
-    if(!response) {
-
-      res.status(404).json({ message: 'Authentication failed. User not found.'});
-
+    if(!isMatch) {
+      return res.status(400).json({ message: 'Authentication failed. Wrong password'});
     } else {
-      // check password
-      if(response.password != req.body.password) {
-        res.status(400).json({ success: false, message: 'Authentication failed. Wrong password'});
-      } else {
 
-        let user = {
-          _id: response._id,
-          username: response.username,
-          admin: response.admin
-        }
-
-        let token = jwt.sign(user, process.env.SuperSecret, {
-          expiresIn: 1440
-        });
-
-        res.status(200).json({ token });
-
+      let newUser = {
+        _id: user._id,
+        username: user.username,
+        admin: user.admin
       }
 
+      let token = jwt.sign(newUser, process.env.SuperSecret, {
+        expiresIn: 1440
+      });
+      
+      res.status(200).json({ token, user: newUser });
     }
-  })
-  .catch(e => {
-    res.status(500).json({ e });
-  })
 
+  } catch (error) {
+    res.status(500).json({ error });    
+  }
 })
 
 module.exports = router;

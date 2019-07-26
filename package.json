@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "chalk": "^2.4.2",
     "clean-css": "^4.2.1",
     "constantinople": "^3.1.2",

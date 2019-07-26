@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 
 let mongoPass = process.env.MongoPass
 
-mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/test?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://Mario:${mongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`, {
   useNewUrlParser: true
 })
 

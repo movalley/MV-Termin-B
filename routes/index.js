@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  res.json({msg: 'radi'});
+  res.status(200).json({ msg: 'Server is live.'})
 });
 
 module.exports = router;

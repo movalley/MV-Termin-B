@@ -1,5 +1,5 @@
 // get an instance of mongoose and mongoose.Schema
-let mongoose = require('mongoose');
+let mongoose = require("mongoose");
 let Schema = mongoose.Schema;
 
 const bcrypt = require("bcryptjs");
@@ -11,26 +11,25 @@ const bcrypt = require("bcryptjs");
 // }))
 
 const userSchema = new Schema({
-    username: String,
-    password: String,
-})
+  username: String,
+  password: String
+});
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", function(next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
 
-    if(!this.isModified("password")) {
-        return next();
-    }
-    
-    let salt = bcrypt.genSaltSync(10);
-    this.password = bcrypt.hashSync(this.password, salt);
-    next();
-})
+  let salt = bcrypt.genSaltSync(10);
+  this.password = bcrypt.hashSync(this.password, salt);
+  next();
+});
 
 userSchema.methods.comparePassword = function(plaintext) {
-    return new Promise((resolve, reject) => {
-        resolve(bcrypt.compareSync(plaintext, this.password))
-    })
-    // return callback(null, bcrypt.compareSync(plaintext, this.password));
+  return new Promise((resolve, reject) => {
+    resolve(bcrypt.compareSync(plaintext, this.password));
+  });
+  // return callback(null, bcrypt.compareSync(plaintext, this.password));
 };
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model("User", userSchema);

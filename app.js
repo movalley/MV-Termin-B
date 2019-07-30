@@ -19,7 +19,8 @@ var profileRoute = require("./routes/profile");
 mongoose.connect(
   `mongodb+srv://Mario:${process.env.MongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`,
   {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useCreateIndex: true
   }
 );
 

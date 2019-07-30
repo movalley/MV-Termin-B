@@ -11,8 +11,30 @@ const bcrypt = require("bcryptjs");
 // }))
 
 const userSchema = new Schema({
-  username: String,
-  password: String
+  username: {
+    type: String,
+    required: [true, "Email is required"],
+    unique: true,
+    validate: {
+      validator: function(v) {
+        return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
+  },
+  password: {
+    type: String,
+    required: [true, "Password is requried"],
+    minlength: 4
+    // COMMENTED FOR DEV PURPOSES
+    // validate: {
+    //   validator: function(v) {
+    //     return /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(v);
+    //   },
+    //   message: props =>
+    //     `Password needs at least one number, one lowercase and one uppercase letter!`
+    // }
+  }
 });
 
 userSchema.pre("save", function(next) {

@@ -15,6 +15,7 @@ var disconnected = chalk.bold.red;
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var profileRoute = require("./routes/profile");
+var terminRoute = require("./routes/termin");
 
 mongoose.connect(
   `mongodb+srv://Mario:${process.env.MongoPass}@astriddb-m3oau.mongodb.net/termin?retryWrites=true&w=majority`,
@@ -76,6 +77,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/profile", profileRoute);
+app.use("/termin", terminRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

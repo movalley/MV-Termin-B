@@ -53,4 +53,26 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// join specific termin
+router.post("/:id", async (req, res) => {
+  try {
+    let player = {
+      _id: req.decoded._id,
+      name: req.decoded.username,
+      team: "white"
+    };
+
+    let query = Termin.update(
+      { _id: req.params.id },
+      { $push: { playersList: player } }
+    );
+    let results = await query.exec();
+
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
+});
+
 module.exports = router;

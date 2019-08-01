@@ -3,6 +3,7 @@ var router = express.Router();
 
 let Termin = require("../models/termin");
 
+// get all termins from loged in user
 router.get("/", async (req, res) => {
   try {
     let query = Termin.find({ creator: req.decoded._id });
@@ -32,6 +33,19 @@ router.post("/", async (req, res) => {
       ];
 
     let results = await newTermin.save();
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
+});
+
+// get specific termin
+router.get("/:id", async (req, res) => {
+  try {
+    let query = Termin.findById(req.params.id);
+    let results = await query.exec();
+
     res.status(200).json({ results });
   } catch (error) {
     console.error(error);

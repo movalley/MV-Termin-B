@@ -3,8 +3,16 @@ var router = express.Router();
 
 let Termin = require("../models/termin");
 
-router.get("/", (req, res) => {
-  res.status(200).json({ msg: "GET TERMIN" });
+router.get("/", async (req, res) => {
+  try {
+    let query = Termin.find({ creator: req.decoded._id });
+    let results = await query.exec();
+
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
 });
 
 // create termin

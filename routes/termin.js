@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // create termin
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     let newTermin = new Termin({
       title: req.body.title,
@@ -54,7 +54,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // join specific termin
-router.post("/:id", async (req, res) => {
+router.post("/join/:id", async (req, res) => {
   try {
     let player = {
       _id: req.decoded._id,

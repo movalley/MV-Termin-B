@@ -56,19 +56,35 @@ router.get("/:id", async (req, res) => {
 // join specific termin
 router.post("/join/:id", async (req, res) => {
   try {
+    const terminID = req.params.id;
+
     let player = {
       _id: req.decoded._id,
       name: req.decoded.username,
       team: "white"
     };
 
+    // check does player exists in termin
+    let playerCheck = await Termin.findById(terminID).exec();
+
+    let playeAlrdyJoined = playerCheck.playersList.filter(
+      player => player._id == req.decoded._id
+    ).length;
+
+    if (playeAlrdyJoined > 0) {
+      res
+        .status(200)
+        .json({ success: false, message: "You are already in this termin!" });
+      return;
+    }
+
     let query = Termin.update(
-      { _id: req.params.id },
+      { _id: terminID },
       { $push: { playersList: player } }
     );
     let results = await query.exec();
 
-    res.status(200).json({ results });
+    res.status(200).json({ success: true, results });
   } catch (error) {
     console.error(error);
     res.status(200).json({ error });

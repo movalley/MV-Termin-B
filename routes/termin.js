@@ -123,12 +123,11 @@ router.delete("/delete/:id", async (req, res) => {
   try {
     let terminDetails = await Termin.findById(req.params.id).exec();
 
-    if (terminDetails.creator !== req.decoded._id)
+    if (terminDetails.creator != req.decoded._id)
       throw { message: "You are not creator of this termin!" };
 
     let query = Termin.deleteOne({
-      _id: req.params.id,
-      creator: req.decoded._id
+      _id: req.params.id
     });
     let results = await query.exec();
 

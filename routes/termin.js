@@ -1,5 +1,8 @@
 var express = require("express");
 var router = express.Router();
+var chalk = require("chalk");
+
+var errorMsg = chalk.bold.red;
 
 let Termin = require("../models/termin");
 
@@ -11,8 +14,8 @@ router.get("/", async (req, res) => {
 
     res.status(200).json({ results });
   } catch (error) {
-    console.error(error);
-    res.status(200).json({ error });
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
   }
 });
 
@@ -35,8 +38,8 @@ router.post("/create", async (req, res) => {
     let results = await newTermin.save();
     res.status(200).json({ results });
   } catch (error) {
-    console.error(error);
-    res.status(200).json({ error });
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
   }
 });
 
@@ -48,8 +51,8 @@ router.get("/:id", async (req, res) => {
 
     res.status(200).json({ results });
   } catch (error) {
-    console.error(error);
-    res.status(200).json({ error });
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
   }
 });
 
@@ -87,15 +90,15 @@ router.post("/join/:id", async (req, res) => {
     );
     let results = await query.exec();
 
-    res.status(200).json({ success: true, results });
+    res.status(200).json({ results });
   } catch (error) {
-    console.error(error);
-    res.status(200).json({ error });
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
   }
 });
 
 // remove player from specific termin
-router.post("/remove/:id", async (req, res) => {
+router.delete("/remove/:id", async (req, res) => {
   try {
     const terminID = req.params.id;
 
@@ -112,10 +115,31 @@ router.post("/remove/:id", async (req, res) => {
 
     let results = await query.exec();
 
-    res.status(200).json({ success: true, results });
+    res.status(200).json({ results });
   } catch (error) {
-    console.error(error);
-    res.status(200).json({ error });
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const terminID = req.params.id;
+
+    let terminDetails = await Termin.findById(terminID).exec();
+
+    if (terminDetails.creator != req.decoded._id)
+      throw { message: "You are not creator of this termin!" };
+
+    let query = Termin.deleteOne({
+      _idd: terminID
+    });
+    let results = await query.exec();
+
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(errorMsg(error.message));
+    res.status(400).json({ error });
   }
 });
 

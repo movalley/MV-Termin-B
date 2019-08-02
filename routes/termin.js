@@ -64,21 +64,24 @@ router.post("/join/:id", async (req, res) => {
       team: "white"
     };
 
-    // check does player exists in termin
+    // get termin instace for aditional checks
     let playerCheck = await Termin.findById(terminID).exec();
 
+    // checking is there any room left for other players to join
+    if (playerCheck.playersList.length == playerCheck.playersNumber) {
+      throw { message: "Termin is full!" };
+    }
+
+    // checking does current player already exists in termin
     let playeAlrdyJoined = playerCheck.playersList.filter(
       player => player._id == req.decoded._id
     ).length;
 
     if (playeAlrdyJoined > 0) {
-      res
-        .status(200)
-        .json({ success: false, message: "You are already in this termin!" });
-      return;
+      throw { message: "You are already in this termin!" };
     }
 
-    let query = Termin.update(
+    let query = Termin.updateOne(
       { _id: terminID },
       { $push: { playersList: player } }
     );

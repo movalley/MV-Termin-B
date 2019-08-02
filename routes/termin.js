@@ -56,19 +56,63 @@ router.get("/:id", async (req, res) => {
 // join specific termin
 router.post("/join/:id", async (req, res) => {
   try {
+    const terminID = req.params.id;
+
     let player = {
       _id: req.decoded._id,
       name: req.decoded.username,
       team: "white"
     };
 
-    let query = Termin.update(
-      { _id: req.params.id },
+    // get termin instace for aditional checks
+    let playerCheck = await Termin.findById(terminID).exec();
+
+    // checking is there any room left for other players to join
+    if (playerCheck.playersList.length == playerCheck.playersNumber) {
+      throw { message: "Termin is full!" };
+    }
+
+    // checking does current player already exists in termin
+    let playeAlrdyJoined = playerCheck.playersList.filter(
+      player => player._id == req.decoded._id
+    ).length;
+
+    if (playeAlrdyJoined > 0) {
+      throw { message: "You are already in this termin!" };
+    }
+
+    let query = Termin.updateOne(
+      { _id: terminID },
       { $push: { playersList: player } }
     );
     let results = await query.exec();
 
-    res.status(200).json({ results });
+    res.status(200).json({ success: true, results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
+});
+
+// remove player from specific termin
+router.post("/remove/:id", async (req, res) => {
+  try {
+    const terminID = req.params.id;
+
+    let player = {
+      _id: req.decoded._id,
+      name: req.decoded.username,
+      team: "white"
+    };
+
+    let query = Termin.updateOne(
+      { _id: terminID },
+      { $pull: { playersList: { _id: player._id } } }
+    );
+
+    let results = await query.exec();
+
+    res.status(200).json({ success: true, results });
   } catch (error) {
     console.error(error);
     res.status(200).json({ error });

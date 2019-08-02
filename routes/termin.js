@@ -87,7 +87,7 @@ router.post("/join/:id", async (req, res) => {
     );
     let results = await query.exec();
 
-    res.status(200).json({ success: true, results });
+    res.status(200).json({ results });
   } catch (error) {
     console.error(error);
     res.status(200).json({ error });
@@ -112,7 +112,27 @@ router.post("/remove/:id", async (req, res) => {
 
     let results = await query.exec();
 
-    res.status(200).json({ success: true, results });
+    res.status(200).json({ results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    let terminDetails = await Termin.findById(req.params.id).exec();
+
+    if (terminDetails.creator !== req.decoded._id)
+      throw { message: "You are not creator of this termin!" };
+
+    let query = Termin.deleteOne({
+      _id: req.params.id,
+      creator: req.decoded._id
+    });
+    let results = await query.exec();
+
+    res.status(200).json({ results });
   } catch (error) {
     console.error(error);
     res.status(200).json({ error });

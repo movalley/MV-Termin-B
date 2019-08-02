@@ -94,4 +94,29 @@ router.post("/join/:id", async (req, res) => {
   }
 });
 
+// remove player from specific termin
+router.post("/remove/:id", async (req, res) => {
+  try {
+    const terminID = req.params.id;
+
+    let player = {
+      _id: req.decoded._id,
+      name: req.decoded.username,
+      team: "white"
+    };
+
+    let query = Termin.updateOne(
+      { _id: terminID },
+      { $pull: { playersList: { _id: player._id } } }
+    );
+
+    let results = await query.exec();
+
+    res.status(200).json({ success: true, results });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({ error });
+  }
+});
+
 module.exports = router;

@@ -133,7 +133,7 @@ router.delete("/delete/:id", async (req, res) => {
       throw { message: "You are not creator of this termin!" };
 
     let query = Termin.deleteOne({
-      _idd: terminID
+      _id: terminID
     });
     let results = await query.exec();
 
@@ -155,12 +155,12 @@ router.delete("/kick/:terminID/:playerID", async (req, res) => {
     if (terminDetails.creator != req.decoded._id)
       throw { message: "You are not creator of this termin!" };
 
-      let query = Termin.updateOne(
-        { _id: terminID },
-        { $pull: { playersList: { _id: playerID } } }
-      );
-  
-      let results = await query.exec();
+    let query = Termin.updateOne(
+      { _id: terminID },
+      { $pull: { playersList: { _id: playerID } } }
+    );
+
+    let results = await query.exec();
 
     res.status(200).json({ results });
   } catch (error) {
